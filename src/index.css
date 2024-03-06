@@ -1,3 +1,7 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.modak {
+  font-family: "Modak", system-ui;
+}
