@@ -10,7 +10,7 @@ interface AuthContextProps {
   loading: boolean;
 }
 
-const AuthContext = createContext<AuthContextProps>({
+const AuthContext = React.createContext<AuthContextProps>({
   currentUser: null,
   userLoggedIn: false,
   loading: true,
