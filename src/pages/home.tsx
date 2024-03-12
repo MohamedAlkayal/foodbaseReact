@@ -12,7 +12,7 @@ export default function Home() {
             Get Started
           </Link>
         </div>
-        <img className="w-[900px]" src="src/assets/hero.png" alt="Hands holding slices of pizza" />
+        <img className="w-[900px]" src="/assets/hero.png" alt="Hands holding slices of pizza" />
       </main>
     </div>
   );

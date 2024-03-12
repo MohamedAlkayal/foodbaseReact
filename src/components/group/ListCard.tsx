@@ -28,7 +28,7 @@ export function ListCard({ list }: { list: List }) {
   return (
     <div className="p-6 min-w-80 min-h-80 border rounded-lg">
       <div className=" overflow-hidden rounded-xl mb-4">
-        <img src="src/assets/placeholder.jpg" alt="placeholder" />
+        <img src="/assets/placeholder.jpg" alt="placeholder" />
       </div>
 
       <div className="flex justify-between items-center mb-4">

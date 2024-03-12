@@ -79,7 +79,7 @@ export default function ListInfo({ listData, updateList }: ListInfoProps) {
     <>
       <div>
         <div className="flex items-center justify-center overflow-hidden rounded-lg mb-6 max-h-[200px]">
-          <img className="w-full " src="src/assets/placeholder.jpg" alt="placehoder" />
+          <img className="w-full " src="/assets/placeholder.jpg" alt="placehoder" />
         </div>
         <div className="flex justify-between items-center mb-4">
           <p className="text-xl font-semibold">{listData?.restaurant.name}</p>
