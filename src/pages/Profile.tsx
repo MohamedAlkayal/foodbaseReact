@@ -19,11 +19,15 @@ export default function Profile() {
         <ProfileInfo isLoading={isFetchingUser} user={user} />
         <div className="w-full lg:w-3/4 ">
           <GroupsController toggle={toggle} />
-          <div className="flex flex-col gap-4">
-            {user?.groups?.map((g) => {
-              return <GroupCard key={g._id} group={g} />;
-            })}
-          </div>
+          {user && user?.groups?.length > 0 ? (
+            <div className="flex flex-col gap-4">
+              {user?.groups?.map((g) => {
+                return <GroupCard key={g._id} group={g} />;
+              })}
+            </div>
+          ) : (
+            <div className="flex py-64 justify-center items-center text-gray-600">Join or Create a group</div>
+          )}
         </div>
       </div>
       <CreateGroupModal isOpened={isOpened} elementRef={elementRef} toggle={toggle} />

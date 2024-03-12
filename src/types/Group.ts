@@ -12,5 +12,5 @@ export interface Group {
     createOrderList: boolean;
     _id?: string;
   };
-  orderLists?: List[];
+  orderLists: List[];
 }

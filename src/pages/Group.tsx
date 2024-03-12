@@ -36,6 +36,7 @@ export default function GroupPage() {
         <GroupInfo isLoading={isFetchingGroup} groupData={groupData} updateGroupData={updateGroupData} />
         <div className="w-full lg:w-3/4 ">
           <ListsController groupData={groupData} toggle={toggle} />
+
           {groupData && <ListsLayout groupData={groupData} />}
         </div>
       </div>

@@ -4,7 +4,7 @@ export interface MyUser {
   _id?: string | undefined;
   username: string | undefined;
   email: string;
-  groups?: Group[];
-  orders?: string[];
+  groups: Group[];
+  orders: string[];
   iat: number;
 }

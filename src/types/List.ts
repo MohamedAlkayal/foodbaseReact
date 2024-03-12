@@ -1,3 +1,4 @@
+import { Group } from "./Group";
 import { MyUser } from "./MyUser";
 import Restaurant from "./Restaurant";
 
@@ -7,8 +8,8 @@ interface List {
   menuImages?: string[];
   menuLink?: string;
   createdBy: MyUser;
-  group: string;
-  orders?: string[];
+  group: Group;
+  orders: any[];
   state: "Pending" | "Ordered" | "Delivered";
   createdAt: Date;
   updatedAt: Date;

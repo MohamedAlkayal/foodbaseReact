@@ -1,6 +1,7 @@
-interface item {
+export interface Item {
   name: string;
-  price: number;
+  Price: number;
+  count: number;
 }
 
 interface Restaurant {
@@ -9,7 +10,7 @@ interface Restaurant {
   menuImages?: string[];
   menuLink: string;
   phone: number;
-  items?: item[];
+  items?: Item[];
   createdAt: Date;
   updatedAt: Date;
 }

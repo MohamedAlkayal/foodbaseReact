@@ -33,21 +33,27 @@ export function ListsLayout({ groupData }: ListsLayoutProps) {
 
   return (
     <>
-      {days.map((d: string) => {
-        return (
-          <div key={d} className="p-2 pb-6">
-            <div className="flex items-center mb-6 gap-6">
-              <div className="w-full border h-0"></div>
-              <p className=" block text-end text-gray-500 ">{d}</p>
-            </div>
-            <div className="flex flex-wrap gap-4 pb-6  ">
-              {listsSorted.map((l: List) => {
-                return new Date(l.createdAt).toLocaleDateString() == d && <ListCard key={l._id} list={l} />;
-              })}
-            </div>
-          </div>
-        );
-      })}
+      {groupData.orderLists.length > 0 ? (
+        <>
+          {days.map((d: string) => {
+            return (
+              <div key={d} className="p-2 pb-6">
+                <div className="flex items-center mb-6 gap-6">
+                  <div className="w-full border h-0"></div>
+                  <p className=" block text-end text-gray-500 ">{d}</p>
+                </div>
+                <div className="flex flex-wrap gap-4 pb-6  ">
+                  {listsSorted.map((l: List) => {
+                    return new Date(l.createdAt).toLocaleDateString() == d && <ListCard key={l._id} list={l} />;
+                  })}
+                </div>
+              </div>
+            );
+          })}
+        </>
+      ) : (
+        <div className="flex justify-center items-center pt-48 text-gray-600">There is no lists yet in this group</div>
+      )}
     </>
   );
 }
