@@ -2,6 +2,7 @@ import { FormikHelpers, useFormik } from "formik";
 import createGroupSchema from "../../schemas/groupSchemas";
 import { ax } from "../../../axios.config";
 import { useNavigate } from "react-router-dom";
+import { useUser } from "../../context/UserContext";
 
 interface CreateGroupModalProps {
   isOpened: boolean;
@@ -18,6 +19,8 @@ interface FormValues {
 
 export default function CreateGroupModal({ isOpened, elementRef, toggle }: CreateGroupModalProps) {
   const navigate = useNavigate();
+  const { updateUser } = useUser();
+
   const { values, errors, status, touched, handleChange, isSubmitting, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       name: "",
@@ -36,7 +39,8 @@ export default function CreateGroupModal({ isOpened, elementRef, toggle }: Creat
             createOrderList: values.createOrderList,
           },
         };
-        const res = await ax.post("groups", newGroup);
+        const res = await ax.post("/group", newGroup);
+        updateUser();
         navigate(`/group?key=${res.data.data._id}`);
         toggle();
       } catch (err) {
@@ -47,9 +51,9 @@ export default function CreateGroupModal({ isOpened, elementRef, toggle }: Creat
   });
 
   return (
-    <div className={isOpened ? "" : "hidden"}>
-      <div className="top-0 absolute h-dvh w-full bg-black opacity-20"></div>
-      <div ref={elementRef} className=" w-4/5 lg:w-1/3 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] absolute bg-white p-8 pb-4 rounded-xl shadow-md">
+    <div className={`  ${isOpened ? "" : "hidden"}`}>
+      <div className="top-0 absolute z-40 h-full w-full bg-black opacity-20"></div>
+      <div ref={elementRef} className=" z-40 w-5/6 lg:w-1/3 top-[50%] left-[50%] translate-x-[-50%] translate-y-[-50%] absolute bg-white p-8 pb-4 rounded-xl shadow-md">
         <form onSubmit={handleSubmit}>
           <div className="flex flex-col gap-2 mb-4">
             <label htmlFor="name">Group Name</label>
@@ -76,7 +80,7 @@ export default function CreateGroupModal({ isOpened, elementRef, toggle }: Creat
             <input id="createOrderList" type="checkbox" onChange={handleChange} checked={values.createOrderList} />
             <label htmlFor="createOrderList">Users can create order List</label>
           </div>
-          <button disabled={isSubmitting} type="submit" className={`w-full mb-3 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting ? "hover:bg-orange-300 bg-orange-300" : ""}`}>
+          <button disabled={isSubmitting} type="submit" className={`w-full mb-3 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting ? " opacity-60" : ""}`}>
             Create
           </button>
           <p className="text-center text-red-500 text-sm h-8">{status}</p>

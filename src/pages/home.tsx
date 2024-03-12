@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import Header from "../components/Header";
+import Header from "../components/shared/Header";
 export default function Home() {
   return (
     <div>
@@ -12,7 +12,7 @@ export default function Home() {
             Get Started
           </Link>
         </div>
-        <img className="w-[900px]" src="src/assets/hero.png" alt="" />
+        <img className="w-[900px]" src="src/assets/hero.png" alt="Hands holding slices of pizza" />
       </main>
     </div>
   );

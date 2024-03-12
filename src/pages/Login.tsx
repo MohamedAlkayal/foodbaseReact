@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ax } from "../../axios.config";
+import { ax, resetAxiosConfig } from "../../axios.config";
 import { loginSchema } from "../schemas/authSchemas";
 import { Link } from "react-router-dom";
 import background from "../assets/bg.webp";
@@ -10,7 +10,7 @@ import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
 import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
 import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
 import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import jwtParse from "../utils/jwtParse";
+import { useUser } from "../context/UserContext";
 
 interface FormValues {
   email: string;
@@ -19,6 +19,8 @@ interface FormValues {
 
 export default function Login() {
   const [isPassword, setIsPassword] = useState(true);
+  const { isFetchingUser, updateUser } = useUser();
+
   const navigate = useNavigate();
   const { values, errors, status, touched, handleChange, isSubmitting, handleBlur, handleSubmit } = useFormik({
     initialValues: {
@@ -28,13 +30,14 @@ export default function Login() {
     validationSchema: loginSchema,
     onSubmit: async (values: FormValues, actions: FormikHelpers<FormValues>) => {
       try {
-        const response = await ax.post("/login", {
+        const response = await ax.post("/auth/login", {
           email: values.email,
           password: values.password,
         });
         localStorage.setItem("accessToken", response.data.accessToken);
-        const userData = await jwtParse(response.data.accessToken);
-        navigate(`/profile?user=${userData.username}`);
+        resetAxiosConfig();
+        await updateUser();
+        navigate(`/profile`);
         actions.resetForm();
       } catch (err: unknown) {
         console.log(err);
@@ -84,7 +87,7 @@ export default function Login() {
               <p className="text-red-500 text-[12px] h-4">{errors.password && touched.password && errors.password}</p>
             </div>
           </div>
-          <button disabled={isSubmitting} type="submit" className={`w-full mb-4 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting ? "hover:bg-orange-300 bg-orange-300" : ""}`}>
+          <button disabled={isSubmitting || isFetchingUser} type="submit" className={`w-full mb-4 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting || isFetchingUser ? " opacity-60" : ""}`}>
             Login
           </button>
           <p className="text-center text-red-500 text-sm mb-4 h-8">{status}</p>

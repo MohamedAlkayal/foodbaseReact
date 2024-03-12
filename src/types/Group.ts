@@ -1,4 +1,5 @@
 import { MyUser } from "./MyUser";
+import List from "./List";
 
 export interface Group {
   _id?: string;
@@ -11,5 +12,5 @@ export interface Group {
     createOrderList: boolean;
     _id?: string;
   };
-  orderList?: string[];
+  orderLists?: List[];
 }

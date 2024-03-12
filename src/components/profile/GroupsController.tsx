@@ -13,22 +13,24 @@ interface FormValues {
 
 const key_Regex = /^[0-9a-fA-F]{24}$/;
 const key_Schema = yup.object().shape({
-  key: yup.string().required().matches(key_Regex),
+  key: yup.string().required().matches(key_Regex, { message: "Enter a valid group key" }),
 });
 
 export default function GroupsController({ toggle }: GroupsControllerProps) {
   const navigate = useNavigate();
-  const { values, errors, handleChange, isSubmitting, handleSubmit } = useFormik({
+  const { values, errors, status, handleChange, isSubmitting, handleSubmit } = useFormik({
     initialValues: {
       key: "",
     },
     validationSchema: key_Schema,
     onSubmit: async (values: FormValues, actions: FormikHelpers<FormValues>) => {
       try {
-        await ax.post(`groups/${values.key}/join`);
+        await ax.post(`group/${values.key}/`);
         navigate(`/group?key=${values.key}`);
         actions.resetForm();
-      } catch (err) {
+      } catch (err: unknown) {
+        // @ts-expect-error Ignoring error because we're confident about the type of 'err'
+        actions.setStatus(err.response.data.info);
         console.log(err);
       }
     },
@@ -40,7 +42,7 @@ export default function GroupsController({ toggle }: GroupsControllerProps) {
 
       <div className="flex md:justify-end w-full gap-3 ">
         <form className="relative w-full" onSubmit={handleSubmit}>
-          <p className=" absolute bottom-12 text-red-500 text-[13px]">{errors.key}</p>
+          <p className=" absolute bottom-12 text-red-500 text-[13px]">{errors.key || status}</p>
           <input className={`p-2 border w-3/4 rounded-lg rounded-r-none ${errors.key ? " border-red-500" : ""}`} placeholder="Enter group key" id="key" onChange={handleChange} value={values.key} type="text" />
           <button className={`py-2 w-1/4 rounded-lg rounded-l-none bg-orange-500 text-white duration-300 hover:bg-orange-600 ${isSubmitting ? "bg-orange-300" : ""}`} type="submit" disabled={isSubmitting}>
             Join

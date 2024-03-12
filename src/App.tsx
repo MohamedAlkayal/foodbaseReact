@@ -6,22 +6,27 @@ import Profile from "./pages/Profile";
 import Register from "./pages/Register";
 import GuestRoutes from "./guards/GuestRoutes";
 import PrivateRoutes from "./guards/PrivateRoutes";
+import { UserProvider } from "./context/UserContext";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { ListPage } from "./pages/ListPage";
 
 function App() {
   return (
     <BrowserRouter>
-      <Routes>
-        <Route path={"/"} element={<Home />} />
-        <Route element={<PrivateRoutes />}>
-          <Route path={"/profile"} element={<Profile />} />
-          <Route path={"/group"} element={<Group />} />
-        </Route>
-        <Route element={<GuestRoutes />}>
-          <Route path={"/login"} element={<Login />} />
-          <Route path={"/register"} element={<Register />} />
-        </Route>
-      </Routes>
+      <UserProvider>
+        <Routes>
+          <Route path={"/"} element={<Home />} />
+          <Route element={<PrivateRoutes />}>
+            <Route path={"/profile"} element={<Profile />} />
+            <Route path={"/group"} element={<Group />} />
+            <Route path={"/list"} element={<ListPage />} />
+          </Route>
+          <Route element={<GuestRoutes />}>
+            <Route path={"/login"} element={<Login />} />
+            <Route path={"/register"} element={<Register />} />
+          </Route>
+        </Routes>
+      </UserProvider>
     </BrowserRouter>
   );
 }

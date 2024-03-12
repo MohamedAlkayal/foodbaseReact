@@ -31,7 +31,7 @@ export default function Register() {
     validationSchema: registerSchema,
     onSubmit: async (values: FormValues, actions: FormikHelpers<FormValues>) => {
       try {
-        await ax.post("/signup", { username: values.username, email: values.email, password: values.password });
+        await ax.post("/auth/signup", { username: values.username, email: values.email, password: values.password });
         navigate("/");
         actions.resetForm();
       } catch (err: unknown) {

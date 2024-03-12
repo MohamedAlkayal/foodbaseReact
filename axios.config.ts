@@ -1,12 +1,21 @@
 import axios from "axios";
 
-const accessToken = localStorage.getItem("accessToken");
-
-export const ax = axios.create({
-  baseURL: "http://localhost:4000",
-  timeout: 5000,
+export let ax = axios.create({
+  baseURL: "http://localhost:4040",
+  timeout: 8000,
   headers: {
     "Content-Type": "application/json",
-    Authorization: `${accessToken}`,
+    Authorization: `${localStorage.getItem("accessToken")}`,
   },
 });
+
+export function resetAxiosConfig() {
+  ax = axios.create({
+    baseURL: "http://localhost:4040",
+    timeout: 8000,
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `${localStorage.getItem("accessToken")}`,
+    },
+  });
+}
