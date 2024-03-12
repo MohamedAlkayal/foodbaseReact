@@ -9,6 +9,7 @@ import PrivateRoutes from "./guards/PrivateRoutes";
 import { UserProvider } from "./context/UserContext";
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { ListPage } from "./pages/ListPage";
+import ErrorPage from "./pages/ErrorPage";
 
 function App() {
   return (
@@ -25,6 +26,7 @@ function App() {
             <Route path={"/login"} element={<Login />} />
             <Route path={"/register"} element={<Register />} />
           </Route>
+          <Route path={"*"} element={<ErrorPage />} />
         </Routes>
       </UserProvider>
     </BrowserRouter>
