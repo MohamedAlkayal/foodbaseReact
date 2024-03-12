@@ -1,44 +1,50 @@
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
-import { loginSchema } from "../schemas";
-import background from "../assets/bg.webp";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import { ax, resetAxiosConfig } from "../../axios.config";
+import { loginSchema } from "../schemas/authSchemas";
+import { Link } from "react-router-dom";
+import background from "../assets/bg.webp";
 import { FormikHelpers, useFormik } from "formik";
-import { doSignInWithEmailAndPassword } from "../firebase/auth";
-import { useAuth } from "../context/authContext";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import { useUser } from "../context/UserContext";
 
 interface FormValues {
   email: string;
   password: string;
 }
 
-const onSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
-  try {
-    await doSignInWithEmailAndPassword(values.email, values.password);
-    actions.resetForm();
-  } catch (err: unknown) {
-    actions.setStatus("Invalid credentials");
-  }
-};
-
 export default function Login() {
-  const { userLoggedIn } = useAuth();
   const [isPassword, setIsPassword] = useState(true);
+  const { isFetchingUser, updateUser } = useUser();
+
+  const navigate = useNavigate();
   const { values, errors, status, touched, handleChange, isSubmitting, handleBlur, handleSubmit } = useFormik({
     initialValues: {
       email: "",
       password: "",
     },
     validationSchema: loginSchema,
-    onSubmit,
+    onSubmit: async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+      try {
+        const response = await ax.post("/auth/login", {
+          email: values.email,
+          password: values.password,
+        });
+        localStorage.setItem("accessToken", response.data.accessToken);
+        resetAxiosConfig();
+        await updateUser();
+        navigate(`/profile`);
+        actions.resetForm();
+      } catch (err: unknown) {
+        console.log(err);
+        actions.setStatus("Invalid credentials");
+      }
+    },
   });
-
-  if (userLoggedIn) {
-    return <h1>loggedin</h1>;
-  }
 
   return (
     <div className="flex h-dvh ">
@@ -81,12 +87,15 @@ export default function Login() {
               <p className="text-red-500 text-[12px] h-4">{errors.password && touched.password && errors.password}</p>
             </div>
           </div>
-          <button disabled={isSubmitting} type="submit" className={`w-full mb-4 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting ? "hover:bg-orange-300 bg-orange-300" : ""}`}>
+          <button disabled={isSubmitting || isFetchingUser} type="submit" className={`w-full mb-4 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting || isFetchingUser ? " opacity-60" : ""}`}>
             Login
           </button>
           <p className="text-center text-red-500 text-sm mb-4 h-8">{status}</p>
           <p className="text-center text-sm text-gray-600 border-t p-12">
-            You don't have an account? <span className=" cursor-pointer duration-300 text-blue-500 hover:text-blue-800">Register</span>
+            You don't have an account?{" "}
+            <Link to="/register" className=" cursor-pointer duration-300 text-blue-500 hover:text-blue-800">
+              Register
+            </Link>
           </p>
         </div>
       </form>

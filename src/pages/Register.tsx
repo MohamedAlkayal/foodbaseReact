@@ -1,57 +1,61 @@
-import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
-import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
-import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
-import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
-import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
-import { registerSchema } from "../schemas";
-import background from "../assets/bg.webp";
 import { useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
+import { ax } from "../../axios.config";
+import background from "../assets/bg.webp";
+import { registerSchema } from "../schemas/authSchemas";
 import { FormikHelpers, useFormik } from "formik";
-import { doCreateUserWithEmailAndPassword } from "../firebase/auth";
-import { useAuth } from "../context/authContext";
+import LockOutlinedIcon from "@mui/icons-material/LockOutlined";
+import AlternateEmailIcon from "@mui/icons-material/AlternateEmail";
+import VisibilityOutlinedIcon from "@mui/icons-material/VisibilityOutlined";
+import ErrorOutlineOutlinedIcon from "@mui/icons-material/ErrorOutlineOutlined";
+import VisibilityOffOutlinedIcon from "@mui/icons-material/VisibilityOffOutlined";
+import PersonOutlineOutlinedIcon from "@mui/icons-material/PersonOutlineOutlined";
 
 interface FormValues {
-  fullName: string;
+  username: string;
   email: string;
   password: string;
   confirmPassword: string;
 }
 
-const onSubmit = async (values: FormValues, actions: FormikHelpers<FormValues>) => {
-  try {
-    // await doCreateUserWithEmailAndPassword(values.email, values.password);
-
-    actions.resetForm();
-  } catch (err: unknown) {
-    console.log(err);
-    actions.setStatus("test");
-  }
-};
-
-export function Register() {
-  const { userLoggedIn } = useAuth();
+export default function Register() {
   const [isPassword, setIsPassword] = useState(true);
+  const navigate = useNavigate();
   const { values, errors, status, touched, handleChange, isSubmitting, handleBlur, handleSubmit } = useFormik({
     initialValues: {
-      fullName: "",
+      username: "",
       email: "",
       password: "",
       confirmPassword: "",
     },
     validationSchema: registerSchema,
-    onSubmit,
+    onSubmit: async (values: FormValues, actions: FormikHelpers<FormValues>) => {
+      try {
+        await ax.post("/auth/signup", { username: values.username, email: values.email, password: values.password });
+        navigate("/");
+        actions.resetForm();
+      } catch (err: unknown) {
+        console.log(err);
+        actions.setStatus("Register Failed");
+      }
+    },
   });
 
-  if (userLoggedIn) {
-    return <h1>loggedin</h1>;
-  }
-
   return (
-    <div className="flex h-dvh ">
+    <div className="flex items-center  h-dvh ">
       <h2 className=" block  md:hidden w-full p-8 absolute top-2 modak text-orange-500 text-center text-5xl">Foodbase</h2>
-      <form onSubmit={handleSubmit} className="w-full h-full flex items-center justify-center md:w-3/5">
-        <div className="px-8 w-full md:w-1/2 md:px-0">
-          <div className="flex flex-col gap-3 mb-8 ">
+      <form onSubmit={handleSubmit} className="w-full h-fit flex items-center justify-center md:w-3/5">
+        <div className="px-8 w-fit md:w-1/2 md:px-0">
+          <div className="flex flex-col gap-3 mb-6 ">
+            <label className="flex gap-1 items-center" htmlFor="username">
+              <PersonOutlineOutlinedIcon fontSize="inherit" />
+              <span>Username</span>
+              {errors.username && touched.username && <ErrorOutlineOutlinedIcon fontSize="inherit" className="text-red-500" />}
+            </label>
+            <input onBlur={handleBlur} onChange={handleChange} value={values.username} id="username" type="text" placeholder="foody420" className={` ${errors.username && touched.username ? " border-red-500" : ""} border rounded focus:outline-blue-300 py-2 px-3`} />
+            <p className="text-red-500 text-[12px] h-4">{errors.username && touched.username && errors.username}</p>
+          </div>
+          <div className="flex flex-col gap-3 mb-6 ">
             <label className="flex gap-1 items-center" htmlFor="email">
               <AlternateEmailIcon fontSize="inherit" />
               <span>Email</span>
@@ -60,7 +64,7 @@ export function Register() {
             <input onBlur={handleBlur} onChange={handleChange} value={values.email} id="email" type="text" placeholder="example@mail.com" className={` ${errors.email && touched.email ? " border-red-500" : ""} border rounded focus:outline-blue-300 py-2 px-3`} />
             <p className="text-red-500 text-[12px] h-4">{errors.email && touched.email && errors.email}</p>
           </div>
-          <div className="flex flex-col gap-3 mb-8">
+          <div className="flex flex-col gap-3 mb-6">
             <div className="flex justify-between items-center">
               <label className="flex gap-1 items-center" htmlFor="password">
                 <LockOutlinedIcon fontSize="inherit" />
@@ -86,7 +90,7 @@ export function Register() {
               <p className="text-red-500 text-[12px] h-4">{errors.password && touched.password && errors.password}</p>
             </div>
           </div>
-          <div className="flex flex-col gap-3 mb-8">
+          <div className="flex flex-col gap-3 mb-6">
             <div className="flex justify-between items-center">
               <label className="flex gap-1 items-center" htmlFor="confirmPassword">
                 <LockOutlinedIcon fontSize="inherit" />
@@ -115,9 +119,12 @@ export function Register() {
           <button disabled={isSubmitting} type="submit" className={`w-full mb-4 bg-orange-500 text-white py-2 rounded duration-300 hover:bg-orange-600 ${isSubmitting ? "hover:bg-orange-300 bg-orange-300" : ""}`}>
             Register
           </button>
-          <p className="text-center text-red-500 text-sm mb-4 h-8">{status}</p>
-          <p className="text-center text-sm text-gray-600 border-t p-12">
-            You already have an account? <span className=" cursor-pointer duration-300 text-blue-500 hover:text-blue-800">Login</span>
+          <p className="text-center text-red-500 text-sm mb-2 h-8">{status}</p>
+          <p className="text-center text-sm text-gray-600 border-t p-6">
+            You already have an account?{" "}
+            <Link to="/login" className=" cursor-pointer duration-300 text-blue-500 hover:text-blue-800">
+              Login
+            </Link>
           </p>
         </div>
       </form>
