@@ -1,7 +1,7 @@
 import axios from "axios";
 
 export let ax = axios.create({
-  baseURL: "http://localhost:4040",
+  baseURL: "https://foodbaseapi.onrender.com",
   timeout: 8000,
   headers: {
     "Content-Type": "application/json",
@@ -11,7 +11,7 @@ export let ax = axios.create({
 
 export function resetAxiosConfig() {
   ax = axios.create({
-    baseURL: "http://localhost:4040",
+    baseURL: "https://foodbaseapi.onrender.com",
     timeout: 8000,
     headers: {
       "Content-Type": "application/json",
